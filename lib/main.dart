@@ -1,41 +1,167 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(NewsPortalApp());
+}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
+class NewsPortalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Application name
-      title: 'Flutter Hello World',
-      // Application theme data, you can set the colors for the application as
-      // you want
+      title: 'News Portal',
       theme: ThemeData(
-        // useMaterial3: false,
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // A widget which will be started on application startup
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: NewsPortalHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class NewsPortalHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('News Portal'),
+      ),
+      body: NewsList(), // Placeholder for displaying news articles
+    );
+  }
+}
+
+class NewsList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Simulated list of news articles
+    List<Map<String, dynamic>> newsArticles = [
+      {
+        'title': 'Elephant Crashes Roads',
+        'subtitle': 'Recent elephant stampede causes chaos',
+        'image': 'assets/elephant.jpg',
+      },
+      {
+        'title': 'Ships Sank in the Sea',
+        'subtitle': 'Multiple ships lost in a violent storm',
+        'image': 'assets/ship.jpg',
+      },
+    ];
+
+    return ListView.builder(
+      itemCount: newsArticles.length,
+      itemBuilder: (context, index) {
+        return NewsCard(
+          title: newsArticles[index]['title'],
+          subtitle: newsArticles[index]['subtitle'],
+          image: newsArticles[index]['image'],
+          onTap: () {
+            // Navigate to news details page
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    NewsDetailsPage(newsArticle: newsArticles[index]),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class NewsCard extends StatelessWidget {
   final String title;
-  const MyHomePage({super.key, required this.title});  
+  final String subtitle;
+  final String image;
+  final VoidCallback onTap;
+
+  NewsCard({
+    required this.title,
+    required this.subtitle,
+    required this.image,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.all(8),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Image.asset(
+              image,
+              fit: BoxFit.cover,
+              height: 200,
+            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NewsDetailsPage extends StatelessWidget {
+  final Map<String, dynamic> newsArticle;
+
+  NewsDetailsPage({required this.newsArticle});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // The title text which will be shown on the action bar
-        title: Text(title),
+        title: Text('News Details'),
       ),
       body: Center(
-        child: Text(
-          'Hello, World!',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              newsArticle['image'],
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            Text(
+              newsArticle['title'],
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              newsArticle['subtitle'],
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ],
         ),
       ),
     );
